@@ -11,19 +11,15 @@ string exitcode;
 vector <char> letters;
 int attempts = 3;
 
-void clear() {
+void clear() {//explain this later when you know whats happening
 	COORD topLeft = { 0, 0 };
 	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
 	CONSOLE_SCREEN_BUFFER_INFO screen;
 	DWORD written;
 
 	GetConsoleScreenBufferInfo(console, &screen);
-	FillConsoleOutputCharacterA(
+	FillConsoleOutputCharacterA(	
 		console, ' ', screen.dwSize.X * screen.dwSize.Y, topLeft, &written
-	);
-	FillConsoleOutputAttribute(
-		console, FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_BLUE,
-		screen.dwSize.X * screen.dwSize.Y, topLeft, &written
 	);
 	SetConsoleCursorPosition(console, topLeft);
 }
@@ -52,10 +48,26 @@ void piovesan() {//ask for a french sentence
 	}
 }
 void kempe() {//solving math equation
-	letters.push_back('G');
-	letters.push_back('I');
-	letters.push_back('N');
-	letters.push_back('T');
+	if (progress[2] == 0) {
+		int solution;
+		cout << "Welcome to the math lab says Mr Kempe.\nYou will need to solve a simple math equation for me\nBe careful of BEDMAS\n";
+		cout << "Please give me the answer to 5*3/4+1 =";
+		cin >> solution;
+		while (solution != 3) {
+			cout << "Well well well, it looks like you will need to come visit my class sometime.\nYou have entered the wrong solution, try again:";
+			cin >> solution;
+		}
+		cout << "Congratulations, you have made it through my impossible math class. I shall give you these letters to help you G I N T\n";
+		cout << "As you leave Mr Kempe jumps into his ceiling beneath the painted tiles...never to be seen again\n";
+		letters.push_back('G');
+		letters.push_back('I');
+		letters.push_back('N');
+		letters.push_back('T');
+		progress[2] = 1;
+	}
+	else {
+		cout << "You have returned to room 318. The door is locked since you have already come here and Mr Kempe cannot be found\nBetter move onto a different room";
+	}
 
 }
 void robot() {//drive to then shoot?
@@ -88,16 +100,13 @@ void door() {//ask for secret word
 	clear();
 	cout << "Congrats you have successfully graduated from Saint Mary's High School\nI wish you the very best on your future endeavours\nTry and not get stuck in a school again...\n";
 }
-void room() {
+void twohundred() {
+	cout << "You are currently in room " << progress[0] << "\nYou may advance to any room on this floor(127,128,129,130,Office,Guidance);";
+	cout << "Where would you like to go:";
+	cin >> progress[0];
 	switch (progress[0]) {
 	case 212:
 		piovesan();
-		break;
-	case 318:
-		kempe();
-		break;
-	case 402:
-		robot();
 		break;
 	case 200:
 		door();
@@ -122,21 +131,17 @@ void room() {
 		break;
 	case 209://Hogan/Hint
 		break;
-	case 127://Start
-		break;
-	case 128://Skiba
-		break;
-	case 129://Chapel
-		break;
-	case 130://Music
-		break;
-	case 2://Guidance
-		break;
-	case 3: //office
-		break;
-	case 401://Co-op
-		break;
-	case 400://Shop
+	default://outside
+		cout << "no room";
+	}
+}
+void threehundred() {
+	cout << "You are currently in room " << progress[0] << "\nYou may advance to any room on this floor(127,128,129,130,Office,Guidance);";
+	cout << "Where would you like to go:";
+	cin >> progress[0];
+	switch (progress[0]) {
+	case 318:
+		kempe();
 		break;
 	case 320://Empty
 		break;
@@ -162,8 +167,39 @@ void room() {
 		cout << "no room";
 	}
 }
-void move() {
-
+void onehundred() {
+	cout << "You are currently in room " << progress[0] << "\nYou may advance to any room on this floor(127,128,129,130,Office,Guidance);";
+	cout << "Where would you like to go:";
+	cin >> progress[0];
+	switch (progress[0]) {
+	case 127://Starts
+		break;
+	case 128://Skiba
+		break;
+	case 129://Chapel
+		break;
+	case 130://Music
+		break;
+	case 2://Guidance
+		break;
+	case 3: //office
+		break;
+	default://outside
+		cout << "no room";
+	}
+}
+void fourhundred() {
+	switch (progress[0]) {
+	case 400://Shop
+		break;
+	case 401://Co-op
+		break;
+	case 402://robot
+		robot();
+		break;
+	default://outside
+		cout << "no room";
+	}
 }
 
 int main() {
@@ -202,11 +238,9 @@ int main() {
 	} while (open == false);
 	clear();
 	cout << "To win the game you must visit 3 different areas of the school and complete a task at each location\nThe game will begin shortly...\n";
-	kempe();
-	robot();
-	piovesan();
-	clear();
-	door();
-		
+	cout << "You begin in the computer lab where I assume you are playing this game.\nYou will move from room to room as well as using the stairs and portals to travel from point to point\nGOOD LUCK!\n";
+	progress[0] = 127;
+	onehundred();
+
 	return 0;
 }
