@@ -12,6 +12,7 @@ vector <char> letters;
 int attempts = 3;
 int level;
 char gotodoor;
+int hints = 0;
 
 void twohundred();
 void clear() {//explain this later when you know whats happening
@@ -27,6 +28,37 @@ void clear() {//explain this later when you know whats happening
 	SetConsoleCursorPosition(console, topLeft);//reset to top corner
 }
 void hint(){
+	hints++;
+	cout << "You have chosen a great room. In this room the staff member passes you a note.\nAt the very top in big bold letters it says HINT\nYou are beyond grateful\n";
+	switch (hints) {
+	case 1:
+		cout << "This is your first hint. It says visit one room per floor excluding the 100.\nYou reason that this must mean 200, 300 and the MTO building\n";
+		cout << "You will return to the room you were just in now\n";
+		break;
+	case 2:
+		cout << "This is now your second hint. The note informs you to go visit room 212, 318 and the Innovation space.\n";
+		cout << "To yourself you think these hints are becoming much more helpful.\nAt what point will you be given the solution..\n";
+		break;
+	case 3:
+		cout << "This is your final hint. After this you have lost the game\nThe hint appears to no longer be a hint but rather the answers 3, puzzle and LLLRUDR\n";
+		cout << "You pray to yourself that this is all you will need to escape finally\n";
+		break;
+	case 4:
+		cout << "This is unfortunate\nYou have used up all of your hints.\n";
+		gameover();
+		break;
+	default:
+		break;
+	}
+	if (progress[0] < 200) {
+		onehundred();
+	}
+	else if (progress[0] < 300) {
+		twohundred();
+	}
+	else {
+		fourhundred();
+	}
 }
 void gameover() {
 
@@ -118,6 +150,7 @@ void twohundred() {
 	cout << "\nYou are currently in room " << progress[0] << "\nYou may advance to any room on this floor(238,237,236,235,234,228,212,211,210,209);";
 	cout << "Where would you like to go:";
 	cin >> progress[0];
+	clear();
 	switch (progress[0]) {
 	case 212:
 		piovesan();
@@ -138,6 +171,9 @@ void twohundred() {
 		break;
 	case 237: //Cobb
 		cout << "You have entered room 237\n";
+		cout << "This is the home education room. You grab a snack from one of the fridges.\nAfter snooping through all the drawers and various storage areas you do not find anything useful\n";
+		cout << "You decide its best to move onto a different room\n";
+		twohundred();
 		break;
 	case 236: //Hrycak
 		cout << "You have entered room 236\n";
@@ -276,33 +312,33 @@ int main() {
 	string filename;
 	bool open = false;
 	cout << "Welcome to the Role Playing Game\nYou are a grade 9 student of Saint Mary's who has been locked inside the building on your very first day.\nYou're knowledge of the rooms and teachers will be put to the test\n";
-	//do {
-	//	cout << "Do you have a save file(Y or N)";//does user want to load or start new game
-	//	cin >> oldfile;
-	//	if (oldfile == 'y' || oldfile == 'Y') {//works with both upper and lower case
-	//		cout << "Please enter the save file name without the type:";
-	//		cin >> filename;//get file name
-	//		filename += ".txt";//add file type
-	//		gamefile.open(filename);//find and open file
-	//		if (gamefile.is_open()) {
-	//			open = true;
-	//			for (int i = 0; i < 5; i++) {
-	//				getline(gamefile, theLine);//get first line store in string
-	//				progress[i] = stoi(theLine);//send to progress and convert to integer
-	//			}
-	//		}
-	//	}
-	//	else {
-	//		cout << "Please enter the name of the file you would like to save to:";//new game, create a file save name
-	//		cin >> filename;
-	//		filename += ".txt";//add type
-	//		ofstream gamefile(filename);//create the file
-	//		open = true;//we know its open
-	//		for (int i = 0; i < 5; i++) {
-	//			progress[i] = 0;
-	//		}
-	//	}
-	//} while (open == false);
+	do {
+		cout << "Do you have a save file(Y or N)";//does user want to load or start new game
+		cin >> oldfile;
+		if (oldfile == 'y' || oldfile == 'Y') {//works with both upper and lower case
+			cout << "Please enter the save file name without the type:";
+			cin >> filename;//get file name
+			filename += ".txt";//add file type
+			gamefile.open(filename);//find and open file
+			if (gamefile.is_open()) {
+				open = true;
+				for (int i = 0; i < 5; i++) {
+					getline(gamefile, theLine);//get first line store in string
+					progress[i] = stoi(theLine);//send to progress and convert to integer
+				}
+			}
+		}
+		else {
+			cout << "Please enter the name of the file you would like to save to:";//new game, create a file save name
+			cin >> filename;
+			filename += ".txt";//add type
+			ofstream gamefile(filename);//create the file
+			open = true;//we know its open
+			for (int i = 0; i < 5; i++) {
+				progress[i] = 0;
+			}
+		}
+	} while (open == false);
 	clear();//clear out save stuff
 	cout << "To win the game you must visit 3 different areas of the school and complete a task at each location\nThe game will begin shortly...\n";
 	cout << "You begin in the computer lab where I assume you are playing this game.\nYou will move from room to room as well as using the stairs and portals to travel from point to point\nGOOD LUCK!\n";
