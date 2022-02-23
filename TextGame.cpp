@@ -11,7 +11,9 @@ string exitcode;
 vector <char> letters;
 int attempts = 3;
 int level;
+char gotodoor;
 
+void twohundred();
 void clear() {//explain this later when you know whats happening
 	COORD topLeft = { 0, 0 };//identify top left
 	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE); //get console
@@ -24,7 +26,8 @@ void clear() {//explain this later when you know whats happening
 	);
 	SetConsoleCursorPosition(console, topLeft);//reset to top corner
 }
-void hint(){}
+void hint(){
+}
 void gameover() {
 
 }
@@ -83,6 +86,15 @@ void door() {//ask for secret word
 	for (int i = 0; i < letters.size(); i++) {
 		cout << letters[i] << " ";
 	}
+	cout << "Would you like to try and exit or return to room 238?(T or R)\n";
+	cin >> gotodoor;
+	if (gotodoor == 'r' || gotodoor == 'R') {
+		cout << "You will proceed back to the art room\n";
+		twohundred();
+	}
+	else {
+		cout << "You shall attempt to escape...Good luck\n";
+	}
 	cout << "\nWhat words have you come across today that are 10 letters\nYou'll need to input something to try and get out:";
 	cin >> exitcode;
 	for (int i = 0; i < exitcode.size(); i++) {
@@ -112,6 +124,17 @@ void twohundred() {
 		break;
 	case 238:  //Arnett
 		cout << "You have entered room 238\n";
+		cout << "Hello there says Mr Arnett. I hear you are stuck in the school.\nWhile I do not have any advice to help you...\nI do know this is the only location you may access the door from\n";
+		cout << "Would you like to proceed to the door (Y or N):";
+		cin >> gotodoor;
+		if (gotodoor == 'y' || gotodoor == 'Y') {
+			cout << "You will proceed to the door to try and escape/Mr Arnett wishes you the best of luck\n";
+			door();
+		}
+		else {
+			cout << "I see you have chosen to gather more materials.\nContinue on your adventure little one...\n";
+			twohundred();
+		}
 		break;
 	case 237: //Cobb
 		cout << "You have entered room 237\n";
