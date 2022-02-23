@@ -10,19 +10,21 @@ string french;
 string exitcode;
 vector <char> letters;
 int attempts = 3;
+int level;
 
 void clear() {//explain this later when you know whats happening
-	COORD topLeft = { 0, 0 };
-	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
-	CONSOLE_SCREEN_BUFFER_INFO screen;
-	DWORD written;
+	COORD topLeft = { 0, 0 };//identify top left
+	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE); //get console
+	CONSOLE_SCREEN_BUFFER_INFO screen;//copy the buffer speed
+	DWORD written;//unsigned interger to loop
 
-	GetConsoleScreenBufferInfo(console, &screen);
-	FillConsoleOutputCharacterA(	
+	GetConsoleScreenBufferInfo(console, &screen);//spam with spaces
+	FillConsoleOutputCharacterA(
 		console, ' ', screen.dwSize.X * screen.dwSize.Y, topLeft, &written
 	);
-	SetConsoleCursorPosition(console, topLeft);
+	SetConsoleCursorPosition(console, topLeft);//reset to top corner
 }
+void hint(){}
 void gameover() {
 
 }
@@ -101,41 +103,47 @@ void door() {//ask for secret word
 	cout << "Congrats you have successfully graduated from Saint Mary's High School\nI wish you the very best on your future endeavours\nTry and not get stuck in a school again...\n";
 }
 void twohundred() {
-	cout << "You are currently in room " << progress[0] << "\nYou may advance to any room on this floor(127,128,129,130,Office,Guidance);";
+	cout << "\nYou are currently in room " << progress[0] << "\nYou may advance to any room on this floor(238,237,236,235,234,228,212,211,210,209);";
 	cout << "Where would you like to go:";
 	cin >> progress[0];
 	switch (progress[0]) {
 	case 212:
 		piovesan();
 		break;
-	case 200:
-		door();
-		break;
 	case 238:  //Arnett
+		cout << "You have entered room 238\n";
 		break;
 	case 237: //Cobb
+		cout << "You have entered room 237\n";
 		break;
 	case 236: //Hrycak
+		cout << "You have entered room 236\n";
 		break;
 	case 235: //Reitzel
+		cout << "You have entered room 235\n";
 		break;
 	case 234: //Hillyer
+		cout << "You have entered room 234\n";
 		break;
-	case 230: //Stairs
-		break;
-	case 1: //DRAMA
+	case 228: //DRAMA
+		cout << "You have entered room 228\n";
 		break;
 	case 211: //Neilly
+		cout << "You have entered room 211\n";
 		break;
 	case 210: //Mr Fitz
+		cout << "You have entered room 210\n";
 		break;
 	case 209://Hogan/Hint
+		cout << "You have entered room 209\n";
 		break;
 	default://outside
 		cout << "no room";
+		twohundred();
 	}
 }
 void threehundred() {
+	clear();
 	cout << "You are currently in room " << progress[0] << "\nYou may advance to any room on this floor(127,128,129,130,Office,Guidance);";
 	cout << "Where would you like to go:";
 	cin >> progress[0];
@@ -168,24 +176,60 @@ void threehundred() {
 	}
 }
 void onehundred() {
-	cout << "You are currently in room " << progress[0] << "\nYou may advance to any room on this floor(127,128,129,130,Office,Guidance);";
-	cout << "Where would you like to go:";
+	cout << "You are currently in room " << progress[0] << "\nYou may advance to any room on this floor(127, 128, Chapel(129), Music(130),Office (110), Guidance(112))";
+	cout << "\nWhere would you like to go:";
 	cin >> progress[0];
+	clear();
 	switch (progress[0]) {
 	case 127://Starts
+		cout << "You have entered room 127\nAfter returning to your starting point there is nothing left here except for unoperable computers.\nLooks like this room wont help you\n";
+		onehundred();
 		break;
 	case 128://Skiba
+		cout << "You have entered room 128\n";
+		cout << "Inside you find Ms Skiba, she wishes you the best of luck but cant give you any help on how to leave the school. Better find a new room\n";
+		cout << "From this room there are stairs to the right. You may proceed to a different section of the school\nEnter a 1 to remain on the 100 floor or a 2 to proceed to the two hundreds:";
+		cin >> level;
+		if (level == 1) {
+			clear();
+			cout << "You chose to remain on the 100 floor.\n";
+			onehundred();
+		}
+		else if(level == 2){
+			clear();
+			cout << "upstairs you go, good luck!";
+			progress[0] = 209;
+			twohundred();
+		}
+		else {
+			clear();
+			cout << "You entered an invalid floor number, You will be returned to floor one hundred\n";
+			onehundred();
+		}
 		break;
 	case 129://Chapel
+		cout << "You have entered the chapel\n";
+		cout << "You are now in the chapel\nNow would be a great moment to say a prayer to help you leave the school before you are stuck forever\n";
+		cout << "After your short prayer and some rummaging there is no useful information in this room. Keep on moving\n";
+		onehundred();
 		break;
 	case 130://Music
+		cout << "You have entered the music room\n";
+		cout << "It's very odd to hear such a quiet music room. You ponder around checking the recording studios\nBut still out of luck you must continue onto a new room\n";
+		onehundred();
 		break;
-	case 2://Guidance
+	case 112://Guidance add hint
+		cout << "You have entered the guidance office\n";
+		cout << "Inside you see Ms Bastien sitting there. She welcomes you into the room and stay for a few minutes.\nYou beg her that all you would like to do is leave\nShe tells you that she may be able to offer you a hint...\n";
+		hint();
 		break;
-	case 3: //office
+	case 110: //office
+		cout << "You have entered the main office. To yourself you surely think there would be a solution here.\nWell you've been proven wrong. It is a total ghost town.\nYou look desperately for a key but they've all disapeared\n";
+		onehundred();
 		break;
 	default://outside
 		cout << "no room";
+		onehundred();
 	}
 }
 void fourhundred() {
@@ -209,38 +253,37 @@ int main() {
 	string filename;
 	bool open = false;
 	cout << "Welcome to the Role Playing Game\nYou are a grade 9 student of Saint Mary's who has been locked inside the building on your very first day.\nYou're knowledge of the rooms and teachers will be put to the test\n";
-	do {
-		cout << "Do you have a save file(Y or N)";//does user want to load or start new game
-		cin >> oldfile;
-		if (oldfile == 'y' || oldfile == 'Y') {//works with both upper and lower case
-			cout << "Please enter the save file name without the type:";
-			cin >> filename;//get file name
-			filename += ".txt";//add file type
-			gamefile.open(filename);//find and open file
-			if (gamefile.is_open()) {
-				open = true;
-				for (int i = 0; i < 5; i++) {
-					getline(gamefile, theLine);//get first line store in string
-					progress[i] = stoi(theLine);//send to progress and convert to integer
-				}
-			}
-		}
-		else {
-			cout << "Please enter the name of the file you would like to save to:";//new game, create a file save name
-			cin >> filename;
-			filename += ".txt";//add type
-			ofstream gamefile(filename);//create the file
-			open = true;//we know its open
-			for (int i = 0; i < 5; i++) {
-				progress[i] = 0;
-			}
-		}
-	} while (open == false);
-	clear();
+	//do {
+	//	cout << "Do you have a save file(Y or N)";//does user want to load or start new game
+	//	cin >> oldfile;
+	//	if (oldfile == 'y' || oldfile == 'Y') {//works with both upper and lower case
+	//		cout << "Please enter the save file name without the type:";
+	//		cin >> filename;//get file name
+	//		filename += ".txt";//add file type
+	//		gamefile.open(filename);//find and open file
+	//		if (gamefile.is_open()) {
+	//			open = true;
+	//			for (int i = 0; i < 5; i++) {
+	//				getline(gamefile, theLine);//get first line store in string
+	//				progress[i] = stoi(theLine);//send to progress and convert to integer
+	//			}
+	//		}
+	//	}
+	//	else {
+	//		cout << "Please enter the name of the file you would like to save to:";//new game, create a file save name
+	//		cin >> filename;
+	//		filename += ".txt";//add type
+	//		ofstream gamefile(filename);//create the file
+	//		open = true;//we know its open
+	//		for (int i = 0; i < 5; i++) {
+	//			progress[i] = 0;
+	//		}
+	//	}
+	//} while (open == false);
+	clear();//clear out save stuff
 	cout << "To win the game you must visit 3 different areas of the school and complete a task at each location\nThe game will begin shortly...\n";
 	cout << "You begin in the computer lab where I assume you are playing this game.\nYou will move from room to room as well as using the stairs and portals to travel from point to point\nGOOD LUCK!\n";
 	progress[0] = 127;
 	onehundred();
-
 	return 0;
 }
