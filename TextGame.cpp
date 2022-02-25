@@ -3,6 +3,7 @@
 #include <fstream>
 #include <windows.h>
 #include <vector>
+#include <stdlib.h>
 
 using namespace std;
 int progress[5];// room #, Piovesan, Kempe, Robot, Exit?
@@ -13,8 +14,18 @@ int attempts = 3;
 int level;
 char gotodoor;
 int hints = 0;
+fstream gamefile;//most important for external files
 
 void twohundred();
+void fourhundred();
+void gameover();
+void onehundred();
+void save() {
+	for (int i = 0; i < 5; i++) {
+		gamefile << progress[i] << endl;
+	}
+	gamefile.close();
+}
 void clear() {//explain this later when you know whats happening
 	COORD topLeft = { 0, 0 };//identify top left
 	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE); //get console
@@ -61,17 +72,20 @@ void hint(){
 	}
 }
 void gameover() {
-
+	cout << "Unfortunately you have lost the game. You are stuck in the school forever...\n";
+	save();
+	exit(0);
 }
 void piovesan() {//ask for a french sentence
 	if (progress[1] == 0) {
 		cout << "You have found Mme Piovesan in room 212\nYou ask her for help as you just want to leave\nShe responds in French with:\nBonjour, Pouvez vous traduire le mot casse-tete pour moi\n";
 		cout << "Please enter what you believe the translation of casse-tete is in english:";
 		cin >> french;
-		while (french != "puzzle") {
+		while (french != "puzzle") { 
 			cout << "Essayer encore sil-vous-plait:";
 			cin >> french;
 		}
+		clear();
 		cout << "Bien fait. Jadore faire les casse-tetes says Madame.\nShe slips you a note with the letters A U O on it and gives you no more information.";
 		cout << "Your quest continues\n";
 		cout << "As you leave the room you hear a click, she has locked the door and you may not visit her again...\n";
@@ -81,8 +95,10 @@ void piovesan() {//ask for a french sentence
 		progress[1] = 1;
 	}
 	else {
-		cout << "You have returned to room 212. The door is locked since you have already come here and Mme Piovesan does not have anymore assitance for you\nBetter move onto a different room";
+		cout << "You have returned to room 212.\nThe door is locked since you have already come here and Mme Piovesan does not have anymore assitance for you\nBetter move onto a different room";
 	}
+	progress[0] = 212;
+	twohundred();
 }
 void kempe() {//solving math equation
 	if (progress[2] == 0) {
@@ -177,6 +193,7 @@ void twohundred() {
 		break;
 	case 236: //Hrycak
 		cout << "You have entered room 236\n";
+		hint();
 		break;
 	case 235: //Reitzel
 		cout << "You have entered room 235\n";
@@ -193,7 +210,7 @@ void twohundred() {
 	case 210: //Mr Fitz
 		cout << "You have entered room 210\n";
 		break;
-	case 209://Hogan/Hint
+	case 209://Hogan
 		cout << "You have entered room 209\n";
 		break;
 	default://outside
@@ -306,7 +323,6 @@ void fourhundred() {
 }
 
 int main() {
-	fstream gamefile;//most important for external files
 	string theLine;//using to get data from file
 	char oldfile;
 	string filename;
