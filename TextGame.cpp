@@ -4,9 +4,10 @@
 #include <windows.h>
 #include <vector>
 #include <stdlib.h>
+#include <conio.h>
 
 using namespace std;
-int progress[5];// room #, Piovesan, Kempe, Robot, Exit?
+int progress[5];// room #, Piovesan, Kempe, Robot, Hints
 string french;
 string exitcode;
 vector <char> letters;
@@ -15,23 +16,24 @@ int level;
 char gotodoor;
 char tosave;
 int hints = 0;
+char again;
 fstream gamefile;//most important for external files
 string filename;
 
-void twohundred();
+void twohundred();//templates
 void fourhundred();
 void gameover();
 void onehundred();
 void threehundred();
 void save() {
 	gamefile.close();
-	ofstream gamefile(filename);
+	ofstream gamefile(filename);//open file in writable manner
 	for (int i = 0; i < 5; i++) {
-		gamefile << progress[i] << endl;
+		gamefile << progress[i] << endl;//output
 	}
-	cout << "Your file name is " << filename;
-	gamefile.close();
-	exit(0);
+	cout << "Your file name is " << filename;//tell user filename
+	gamefile.close();//close
+	exit(0);//exit game
 }
 void clear() {//explain this later when you know whats happening
 	COORD topLeft = { 0, 0 };//identify top left
@@ -63,25 +65,29 @@ void hint() {
 		break;
 	case 4:
 		cout << "This is unfortunate\nYou have used up all of your hints.\n";
-		gameover();
+		gameover();//no more hints
 		break;
 	default:
 		break;
 	}
-	if (progress[0] < 200) {
+	progress[4] = hints;//set the progress with hints for saving
+	if (progress[0] < 200) {//return
 		onehundred();
 	}
 	else if (progress[0] < 300) {
 		twohundred();
+	}
+	else if (progress[0] < 400) {
+		threehundred();
 	}
 	else {
 		fourhundred();
 	}
 }
 void gameover() {//
-	cout << "Unfortunately you have lost the game. You are stuck in the school forever...\n";
-	save();
-	exit(0);
+	cout << "\nUnfortunately you have lost the game. You are stuck in the school forever...Press enter to finish\n";
+	_getch();//wait for enter
+	exit(0);//close game
 }
 void piovesan() {//ask for a french sentence
 	if (progress[1] == 0) {
@@ -126,12 +132,14 @@ void kempe() {//solving math equation
 		progress[2] = 1;
 	}
 	else {
-		cout << "You have returned to room 318. The door is locked since you have already come here and Mr Kempe cannot be found\nBetter move onto a different room";
+		cout << "You have returned to room 318. The door is locked since you have already come here and Mr Kempe cannot be found\nBetter move onto a different room\n";
 	}
+	cout << "Press enter to continue\n";
+	_getch();
 	threehundred();
 }
-void robot() {//drive to then shoot? //LLLRUDR
-	if (progress[3] == 0) {
+void robot() {
+	if (progress[3] == 0) {//check if been here before
 		string robot;
 		cout << "Welcome to the innovation space; the robotics club home.\nYou see Mr Varsava is trying to help the robot leave the field\n";
 		cout << "Please tell him which direction to move the robot all in one large sequence\n(R is right, L is Left, U is Up, D is Down)\n";
@@ -148,7 +156,7 @@ void robot() {//drive to then shoot? //LLLRUDR
 		cout << "|_ _ X _ X _ _ _ _ _ _ _|\n";
 		cout << "|_ _ X _ X _ _ _ _ _ _ _|\n";
 		cin >> robot;
-		while (robot != "RRRRUULLLLLULLDDDDDD") {
+		while (robot != "RRRRUULLLLLULLDDDDDD") {//code
 			clear();
 			cout << "Try again, the robot did not exit the field ";
 			cout << "Please tell him which direction to move the robot all in one large sequence\n(R is right, L is Left, U is Up, D is Down)\n";
@@ -164,30 +172,33 @@ void robot() {//drive to then shoot? //LLLRUDR
 			cout << "|_ _ X _ X X X X X X X _|\n";
 			cout << "|_ _ X _ X _ _ _ _ _ _ _|\n";
 			cout << "|_ _ X _ X _ _ _ _ _ _ _|\n";
-			cin >> robot;
-			cin >> robot;
+			cin >> robot;//try again
 		}
 		cout << "Congratulations, the robot has successfuly exited the field.\nYou see the letters R D A on the side of the robot\n";
 		cout << "As you leave Mr Kempe jumps into his ceiling beneath the painted tiles...never to be seen again\n";
-		letters.push_back('R');
+		letters.push_back('R');//give letters
 		letters.push_back('D');
 		letters.push_back('A');
-		progress[3] = 1;
+		progress[3] = 1;//set progress
 	}
 	else {
 		cout << "You have already saved the robot in the Innovation space\nBetter move onto a different room";
 	}
-	fourhundred();
+	fourhundred();//return
 }
 void door() {//ask for secret word
+	clear();
+	if (attempts == 0) {//stop them if they try anything
+		gameover();
+	}
 	cout << "You have arrived at the front door.\nSeemingly the only escape point of the school.\nOn the door you see a padlock requiring 10 letters\n";
 	cout << "From the teachers you have seen so far, you've collected these letters:";
 	for (int i = 0; i < letters.size(); i++) {
-		cout << letters[i] << " ";
+		cout << letters[i] << " ";//output vector
 	}
 	cout << "Would you like to try and exit or return to room 238?(T or R)\n";
 	cin >> gotodoor;
-	if (gotodoor == 'r' || gotodoor == 'R') {
+	if (gotodoor == 'r' || gotodoor == 'R') {//do they want to continue
 		cout << "You will proceed back to the art room\n";
 		twohundred();
 	}
@@ -195,23 +206,30 @@ void door() {//ask for secret word
 		cout << "You shall attempt to escape...Good luck\n";
 	}
 	cout << "\nWhat words have you come across today that are 10 letters\nYou'll need to input something to try and get out:";
-	cin >> exitcode;
+	cin >> exitcode;//get ciode
 	for (int i = 0; i < exitcode.size(); i++) {
-		exitcode[i] = tolower(exitcode[i]);
+		exitcode[i] = tolower(exitcode[i]);//make lower case
 	}
-	while (exitcode != "graduation") {
+	if (exitcode != "graduation") {
 		attempts--;
-		cout << "Unfortunately you have entered the wrong code. You only have " << attempts << " tries remaining before you are stuck in the school forever";
-		cin >> exitcode;
-		for (int i = 0; i < exitcode.size(); i++) {
-			exitcode[i] = tolower(exitcode[i]);
-		}
-		if (attempts == 0) {
+		if (attempts == 0) {//stop them if they run out of tries
 			gameover();
+		}
+		cout << "Unfortunately you have entered the wrong code.\nYou only have " << attempts << " tries remaining before you are stuck in the school forever";
+		cout << "\nDo you wish to try again(Y or N)\n";
+		cin >> again;
+		if (again == 'Y' || again == 'y') {//try again
+			door();
+		}
+		else {
+			twohundred();
 		}
 	}
 	clear();
 	cout << "Congrats you have successfully graduated from Saint Mary's High School\nI wish you the very best on your future endeavours\nTry and not get stuck in a school again...\n";
+	cout << "Press enter to close the program\n"; // they passed
+	_getch();
+	exit(0);
 }
 void twohundred() {
 	cout << "\nYou are currently in room " << progress[0] << "\nYou may advance to any room on this floor(238,237,236,235,234,228,212,211,210,209);";
@@ -263,7 +281,7 @@ void twohundred() {
 			threehundred();
 		}
 		else if (level == 4) {
-			progress[0] = 401;
+			progress[0] = 403;
 			fourhundred();
 		}
 		else {
@@ -289,7 +307,7 @@ void twohundred() {
 }
 void threehundred() {
 	clear();
-	cout << "You are currently in room " << progress[0] << "\nYou may advance to any room on this floor(127,128,129,130,Office,Guidance);";
+	cout << "You are currently in room " << progress[0] << "\nYou may advance to any room on this floor(318,339,319,315,313,327,328,329,201,302,320);";
 	cout << "Where would you like to go:";
 	cin >> progress[0];
 	switch (progress[0]) {
@@ -352,7 +370,7 @@ void threehundred() {
 			threehundred();
 		}
 		else if (level == 4) {
-			progress[0] = 401;
+			progress[0] = 403;
 			fourhundred();
 		}
 		else {
@@ -422,11 +440,29 @@ void onehundred() {
 	}
 }
 void fourhundred() {
-	cout << "You are currently in room " << progress[0] << "\nYou may advance to any room on this floor(Coop(401), Innovation(402), Shop(400))";
+	cout << "You are currently in room " << progress[0] << "\nYou may advance to any room on this floor(Coop(401), Innovation(402), Shop(400), Hallway(403))";
 	cout << "\nWhere would you like to go:";
 	cin >> progress[0];
 	clear();
 	switch (progress[0]) {
+	case 403://Hallway
+		cout << "You are in the hallway in the MTO building, will you remain here or proceed to the school\nEnter a 4 to stay here, a 3 to head upstairs or a 2 to go downstairs\n";
+		cin >> level;
+		if (level == 2) {
+			progress[0] = 234;//head to 200s
+			twohundred();
+		}
+		else if (level == 3) {//head to 300s
+			progress[0] = 320;
+			threehundred();
+		}
+		else if (level == 4) {//head to 400s
+			progress[0] = 403;
+			fourhundred();
+		}
+		else {
+			fourhundred();
+		}
 	case 400://Shop
 		cout << "Unfortunately you did not wear eye protection while entering the shop. Your game is now over.";
 		gameover();
@@ -446,7 +482,6 @@ void fourhundred() {
 int main() {
 	string theLine;//using to get data from file
 	char oldfile;
-	
 	bool open = false;
 	cout << "Welcome to the Role Playing Game\nYou are a grade 9 student of Saint Mary's who has been locked inside the building on your very first day.\nYou're knowledge of the rooms and teachers will be put to the test\n";
 	do {
@@ -463,6 +498,27 @@ int main() {
 					getline(gamefile, theLine);//get first line store in string
 					progress[i] = stoi(theLine);//send to progress and convert to integer
 				}
+				if (progress[1] == 1) {//restore vector to progress status
+					letters.push_back('A');
+					letters.push_back('U');
+					letters.push_back('O');
+				}
+				if (progress[2] == 1) {
+					letters.push_back('G');
+					letters.push_back('I');
+					letters.push_back('N');
+					letters.push_back('T');
+				}
+				if (progress[3] == 1) {
+					letters.push_back('R');
+					letters.push_back('D');
+					letters.push_back('A');
+				}
+				hints = progress[4];
+
+			}
+			else {
+				open = false;
 			}
 		}
 		else {
@@ -474,13 +530,20 @@ int main() {
 			for (int i = 0; i < 5; i++) {
 				progress[i] = 0;
 			}
+			progress[0] = 127;
 		}
 	} while (open == false);
 	clear();//clear out save stuff
 	cout << "To win the game you must visit 3 different areas of the school and complete a task at each location\nThe game will begin shortly...\n";
 	cout << "You begin in the computer lab where I assume you are playing this game.\nYou will move from room to room as well as using the stairs and portals to travel from point to point\nGOOD LUCK!\n";
-	cout << "To save your progress head to room 320 at any point during the game\n";
-	progress[0] = 127;
-	onehundred();
+	cout << "To save your progress head to room 339 at any point during the game\nPress enter to begin\n";
+	_getch();//wait for enter
+	clear();
+	if (progress[0] == 339) {//save point
+		threehundred();
+	}
+	else {//new game
+		onehundred();
+	}
 	return 0;
 }
