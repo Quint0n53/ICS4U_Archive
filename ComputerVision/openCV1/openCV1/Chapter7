@@ -1,0 +1,78 @@
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/imgproc.hpp>
+#include <iostream>
+
+using namespace cv;
+using namespace std;
+
+		//Shape Detection//
+
+void getContour(Mat imgDil, Mat img) {
+	vector<vector<Point>> contours;//vector of points of contours
+	vector <Vec4i> hierarchy;
+	string objectType;
+	
+
+	findContours(imgDil, contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);//find contours store in dual vector
+
+	for (int i = 0; i < contours.size(); i++) {
+		int area = contourArea(contours[i]);
+		//cout << area << endl;
+
+		vector<vector<Point>> conPoly(contours.size());//will check each contour
+		vector <Rect> boundRect(contours.size());//
+		if (area > 1000) {
+
+			float peri = arcLength(contours[i],true);//get perimeter length
+			approxPolyDP(contours[i], conPoly[i], 0.02 * peri, true);//find sides of polygons
+			drawContours(img, conPoly, i, Scalar(0, 0, 0), 2);//draw said sides above
+			cout << conPoly[i].size() << endl;
+			boundRect[i] = boundingRect(conPoly[i]);//create box around points given
+			rectangle(img, boundRect[i].tl(), boundRect[i].br(), Scalar(0, 255, 0),4);//draw said box around entire shape
+			int objCor = (int)conPoly[i].size();
+			if (objCor == 3) {//give name
+				objectType = "Triangle";
+			}
+			if (objCor == 4) {
+				float aspRatio = (float)boundRect[i].width / (float)boundRect[i].height;
+				if (aspRatio > 0.9 && aspRatio < 1.1) {
+					objectType = "Square";
+				}
+				else {
+					objectType = "Rectangle";
+				}
+			}
+			if (objCor > 4) {
+				objectType = "Circle";
+			}
+			putText(img, objectType, { boundRect[i].x,boundRect[i].y - 5 }, FONT_HERSHEY_PLAIN, .5, Scalar(255, 0, 0), 1);//place text
+		}
+	}
+}
+
+int main() {
+	string path = "Resources/shapes.png";//find image in path
+	Mat img = imread(path);//convert to matrix
+	Mat imgGray;
+	Mat imgBlur;
+	Mat imgCanny;
+	Mat imgDil;
+	Mat kernel = getStructuringElement(MORPH_RECT, Size(3, 3));
+
+	//pre-processing
+	cvtColor(img, imgGray, COLOR_BGR2GRAY);
+	GaussianBlur(imgGray, imgBlur, Size(5, 5), 3, 0);
+	Canny(imgBlur,imgCanny, 25, 75);
+	dilate(imgCanny, imgDil, kernel);
+
+	getContour(imgDil,img);//send image to function
+
+	imshow("Image", img);//display matrix
+	//imshow("ImageGray", imgGray);//display matrix
+	//imshow("ImageBlur", imgBlur);//display matrix
+	//imshow("ImageCanny", imgCanny);//display matrix
+	//imshow("ImageDilate", imgDil);//display matrix
+	waitKey(0);
+	return 0;
+}
