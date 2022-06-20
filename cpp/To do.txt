@@ -1,0 +1,3 @@
+To do
+-test in sim
+-find way for the arms to go down too
